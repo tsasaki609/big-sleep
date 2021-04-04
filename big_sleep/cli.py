@@ -31,6 +31,7 @@ def train(
     ema_decay = 0.5,
     num_cutouts = 128,
     center_bias = False,
+    output_path = None,
 ):
     print(f'Starting up... v{__version__}')
 
@@ -61,6 +62,7 @@ def train(
         ema_decay = ema_decay,
         num_cutouts = num_cutouts,
         center_bias = center_bias,
+        output_path = output_path,
     )
 
     if not overwrite and imagine.filename.exists():

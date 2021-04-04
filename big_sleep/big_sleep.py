@@ -318,6 +318,7 @@ class Imagine(nn.Module):
         ema_decay = 0.99,
         num_cutouts = 128,
         center_bias = False,
+        output_path = None
     ):
         super().__init__()
 
@@ -370,7 +371,7 @@ class Imagine(nn.Module):
         # create img transform
         self.clip_transform = create_clip_img_transform(224)
         # create starting encoding
-        self.set_clip_encoding(text=text, img=img, encoding=encoding, text_min=text_min)
+        self.set_clip_encoding(text=text, img=img, encoding=encoding, text_min=text_min, output_path=output_path)
     
     @property
     def seed_suffix(self):
@@ -420,7 +421,7 @@ class Imagine(nn.Module):
         if text_min is not None and text_min != "":
             self.encode_multiple_phrases(text_min, img=img, encoding=encoding, text_type="min")
 
-    def set_clip_encoding(self, text=None, img=None, encoding=None, text_min=""):
+    def set_clip_encoding(self, text=None, img=None, encoding=None, text_min="", output_path=None):
         self.current_best_score = 0
         self.text = text
         self.text_min = text_min
@@ -432,7 +433,10 @@ class Imagine(nn.Module):
             text_path = datetime.now().strftime("%y%m%d-%H%M%S-") + text_path
 
         self.text_path = text_path
-        self.filename = Path(f'./{text_path}{self.seed_suffix}.png')
+        if output_path is None:
+            self.filename = Path(f'./{text_path}{self.seed_suffix}.png')
+        else:
+            self.filename = Path(output_path)
         self.encode_max_and_min(text, img=img, encoding=encoding, text_min=text_min) # Tokenize and encode each prompt
 
     def reset(self):
